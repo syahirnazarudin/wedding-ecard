@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Wedding invitation for Syahir and Zubairah">
+  <title>Walimatul Urus | Syahir & Zubairah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Pinyon+Script&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/index-CNdeR7A6.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DtWApD7H.css">
+</head>
+<body>
+  <audio id="bgMusic" loop src="./assets/NakDaraRindu-DIUlGv7k.mp3"></audio>
+
+  <button id="musicToggle" class="music-wrapper hidden" type="button" aria-label="Toggle music">
+    <span id="musicDisk" class="disk-spinner" aria-hidden="true">&#9835;</span>
+  </button>
+
+  <div id="invitationShell" class="mobile-container invitation-locked">
+    <section id="envelope-cover" class="envelope-overlay" aria-label="Invitation cover">
+      <div class="door-panel door-panel-left" aria-hidden="true"></div>
+      <div class="door-panel door-panel-right" aria-hidden="true"></div>
+      <div class="door-meet-line" aria-hidden="true"></div>
+
+      <button id="openInvitation" class="cover-seal pulse-glow" type="button" aria-label="Buka jemputan">
+        <span class="txt-header">WALIMATUL URUS</span>
+        <span class="seal-name">Syahir</span>
+        <span class="seal-divider">dan</span>
+        <span class="seal-name">Zubairah</span>
+        <span class="seal-open">OPEN</span>
+      </button>
+    </section>
+
+    <main id="main-scroll-view" class="main-body-lock">
+      <section class="scroll-card hero-card reveal-item" style="--section-bg: url('./assets/roseneyda-bg-D0WbN6Rq.png')">
+        <div class="hero-content">
+          <p class="hero-kicker">Walimatulurus</p>
+          <h2 class="hero-couple-name">Syahir</h2>
+          <span class="hero-ampersand">&amp;</span>
+          <h2 class="hero-couple-name">Zubairah</h2>
+          <p class="hero-date">Sabtu, 08 Ogos 2026</p>
+        </div>
+      </section>
+
+      <section class="scroll-card reveal-item" style="--section-bg: url('/assets/images/intro-bg.jpg')">
+        <div class="bismillah-calligraphy" aria-hidden="true">&#65021;</div>
+        <p class="salaam-header">Assalamualaikum W.B.T.</p>
+        <p class="narrative-verse">
+          Dengan penuh kesyukuran ke hadrat Ilahi, kami menjemput Tuan / Puan / Cik ke majlis perkahwinan kami:
+        </p>
+
+        <div class="names-presentation-card">
+          <h2 class="formal-script-name">Muhammad Syahir Bin Nazarudin</h2>
+          <span class="conjunction-and">&</span>
+          <h2 class="formal-script-name">Siti Norzubairah Binti Adam</h2>
+        </div>
+      </section>
+
+      <section class="scroll-card alt-tint reveal-item" style="--section-bg: url('/assets/images/details-bg.jpg')">
+        <div class="glassmorphism-card">
+          <h3 class="card-headline">Butiran Majlis</h3>
+          <div class="gold-accent-dot"></div>
+
+          <p class="date-string">Sabtu, 8 Ogos 2026</p>
+          <p class="time-string">11:00 AM - 4:00 PM</p>
+
+          <div class="ui-divider"></div>
+
+          <p class="location-title">Alam Maya</p>
+          <p class="location-detail">Kajang, Selangor</p>
+        </div>
+
+        <div class="geo-navigation-row">
+          <a href="https://maps.google.com/?q=Dewan%20Perdana%20Utama%20Jalan%20Sultan%20Yahya%20Petra%20Kuala%20Lumpur" target="_blank" rel="noopener" class="geo-action-pill">Google Maps</a>
+          <a href="https://waze.com/ul?q=Dewan%20Perdana%20Utama%20Jalan%20Sultan%20Yahya%20Petra%20Kuala%20Lumpur" target="_blank" rel="noopener" class="geo-action-pill">Waze</a>
+        </div>
+      </section>
+
+      <section class="scroll-card message-card reveal-item" style="--section-bg: url('/assets/images/ucapan-bg.jpg')">
+        <p class="wedding-message">
+          Semoga kehadiran dan doa restu anda menyerikan lagi majlis kami.
+        </p>
+        <p class="wedding-hashtag">#SyahirZubairah</p>
+      </section>
+
+      <section class="scroll-card reveal-item" style="--section-bg: url('/assets/images/rsvp-bg.jpg')">
+        <h3 class="card-headline">Kehadiran (RSVP)</h3>
+        <p class="rsvp-subtext">Sila sahkan kehadiran anda sebelum 1 Jun 2026</p>
+
+        <form id="weddingRsvpForm" class="clean-ui-form">
+          <div class="form-row">
+            <label class="sr-only" for="guestName">Nama penuh</label>
+            <input type="text" id="guestName" name="guestName" placeholder="Nama Penuh Anda" autocomplete="name" required>
+          </div>
+
+          <div class="form-row">
+            <label class="sr-only" for="attendanceStatus">Status kehadiran</label>
+            <select id="attendanceStatus" name="attendanceStatus" required>
+              <option value="" disabled selected>Status Kehadiran</option>
+              <option value="yes">Hadir</option>
+              <option value="no">Tidak Hadir</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <label class="sr-only" for="paxCount">Bilangan pax</label>
+            <input type="number" id="paxCount" name="paxCount" placeholder="Bilangan Pax (1-5)" min="1" max="5">
+          </div>
+
+          <button type="submit" class="btn-form-action">Hantar Pengesahan</button>
+        </form>
+        <p id="rsvpStatusFeedback" class="api-feedback-msg" role="status" aria-live="polite"></p>
+      </section>
+
+      <section id="wishesSection" class="scroll-card wishes-card reveal-item" style="--section-bg: url('/assets/images/wishes-bg.jpg')">
+        <h3 class="card-headline">Ucapan</h3>
+        <p class="rsvp-subtext">Ucapan tetamu yang telah dihantar.</p>
+        <div class="wish-runner" aria-label="Senarai ucapan tetamu">
+          <div id="wishTrack" class="wish-track"></div>
+        </div>
+      </section>
+    </main>
+
+    <nav id="footerActions" class="footer-actions hidden" aria-label="Invitation quick actions">
+      <button class="footer-action" type="button" data-sheet-target="contactSheet">
+        <span aria-hidden="true">☎</span>
+        <span>Hubungi</span>
+      </button>
+      <button class="footer-action" type="button" data-sheet-target="calendarSheet">
+        <span aria-hidden="true">□</span>
+        <span>Kalendar</span>
+      </button>
+      <button class="footer-action" type="button" data-sheet-target="locationSheet">
+        <span aria-hidden="true">⌖</span>
+        <span>Lokasi</span>
+      </button>
+      <button class="footer-action" type="button" data-sheet-target="wishSheet">
+        <span aria-hidden="true">✉</span>
+        <span>Ucapan</span>
+      </button>
+    </nav>
+
+    <div id="sheetBackdrop" class="sheet-backdrop hidden"></div>
+
+    <section id="contactSheet" class="action-sheet hidden" aria-label="Contact options">
+      <button class="sheet-close" type="button" aria-label="Close">×</button>
+      <h3 class="sheet-title">Hubungi PIC</h3>
+      <a class="sheet-link" href="tel:+60123456789">Syahir - 012-345 6789</a>
+      <a class="sheet-link" href="tel:+60198765432">Zubairah - 019-876 5432</a>
+      <a class="sheet-link" href="https://wa.me/60123456789" target="_blank" rel="noopener">WhatsApp Syahir</a>
+      <a class="sheet-link" href="https://wa.me/60198765432" target="_blank" rel="noopener">WhatsApp Zubairah</a>
+    </section>
+
+    <section id="calendarSheet" class="action-sheet hidden" aria-label="Calendar options">
+      <button class="sheet-close" type="button" aria-label="Close">×</button>
+      <h3 class="sheet-title">Simpan Tarikh</h3>
+      <a id="googleCalendarLink" class="sheet-link" target="_blank" rel="noopener">Google Calendar</a>
+      <a id="appleCalendarLink" class="sheet-link" download="syahir-zubairah-wedding.ics">Apple Calendar / iCal</a>
+    </section>
+
+    <section id="locationSheet" class="action-sheet hidden" aria-label="Location options">
+      <button class="sheet-close" type="button" aria-label="Close">×</button>
+      <h3 class="sheet-title">Pilih Navigasi</h3>
+      <a class="sheet-link" href="https://maps.google.com/?q=Alam%20Maya%20Kajang%20Selangor" target="_blank" rel="noopener">Google Maps</a>
+      <a class="sheet-link" href="https://waze.com/ul?q=Alam%20Maya%20Kajang%20Selangor" target="_blank" rel="noopener">Waze</a>
+    </section>
+
+    <section id="wishSheet" class="action-sheet wish-sheet hidden" aria-label="Ucapan form">
+      <button class="sheet-close" type="button" aria-label="Close">×</button>
+      <h3 class="sheet-title">RSVP &amp; Ucapan</h3>
+      <form id="wishForm" class="clean-ui-form wish-form">
+        <div class="form-row">
+          <label for="wishName">Nama<span aria-hidden="true">*</span></label>
+          <input type="text" id="wishName" name="wishName" autocomplete="name" required>
+        </div>
+
+        <div class="form-row">
+          <label for="wishPhone">Nombor Telefon<span aria-hidden="true">*</span></label>
+          <input type="tel" id="wishPhone" name="wishPhone" autocomplete="tel" required>
+        </div>
+
+        <div class="form-row">
+          <label for="wishMessage">Ucapan</label>
+          <textarea id="wishMessage" name="wishMessage" rows="4" required></textarea>
+        </div>
+
+        <div class="sheet-button-row">
+          <button type="button" class="btn-sheet-secondary" data-close-sheet>Batal</button>
+          <button type="submit" class="btn-sheet-primary">Hantar</button>
+        </div>
+      </form>
+      <p id="wishStatusFeedback" class="api-feedback-msg" role="status" aria-live="polite"></p>
+    </section>
+  </div>
+
+</body>
+</html>
