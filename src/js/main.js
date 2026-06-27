@@ -292,8 +292,7 @@ async function renderWishes() {
     return;
   }
 
-  wishTrack.replaceChildren(
-    ...wishes.map((wish) => {
+  const wishElements = wishes.flatMap((wish, index) => {
       const item = document.createElement("article");
       const message = document.createElement("p");
       const name = document.createElement("strong");
@@ -303,9 +302,17 @@ async function renderWishes() {
       name.textContent = wish.name;
 
       item.append(message, name);
-      return item;
-    }),
-  );
+      if (index === wishes.length - 1) {
+        return [item];
+      }
+
+      const divider = document.createElement("div");
+      divider.className = "ui-divider wish-divider";
+      divider.setAttribute("aria-hidden", "true");
+      return [item, divider];
+    });
+
+  wishTrack.replaceChildren(...wishElements);
 
   startWishAutoScroll();
 }
