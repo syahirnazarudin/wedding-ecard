@@ -39,6 +39,8 @@ const defaultWishes = [
   },
 ];
 
+let wishAutoScrollFrame = 0;
+
 document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("openInvitation")
@@ -73,6 +75,18 @@ document.addEventListener("DOMContentLoaded", () => {
   document
     .getElementById("sheetBackdrop")
     ?.addEventListener("click", closeSheets);
+
+  document.querySelector(".wish-runner")?.addEventListener(
+    "pointerdown",
+    () => cancelAnimationFrame(wishAutoScrollFrame),
+    { passive: true },
+  );
+
+  document.querySelector(".wish-runner")?.addEventListener(
+    "wheel",
+    () => cancelAnimationFrame(wishAutoScrollFrame),
+    { passive: true },
+  );
 
   setupCalendarLinks();
   renderWishes();
@@ -249,10 +263,9 @@ function renderWishes() {
   if (!wishTrack) return;
 
   const wishes = getWishes();
-  const repeatedWishes = [...wishes, ...wishes];
 
   wishTrack.replaceChildren(
-    ...repeatedWishes.map((wish) => {
+    ...wishes.map((wish) => {
       const item = document.createElement("article");
       const message = document.createElement("p");
       const name = document.createElement("strong");
@@ -265,6 +278,37 @@ function renderWishes() {
       return item;
     }),
   );
+
+  startWishAutoScroll();
+}
+
+function startWishAutoScroll() {
+  const wishRunner = document.querySelector(".wish-runner");
+  if (!wishRunner) return;
+
+  cancelAnimationFrame(wishAutoScrollFrame);
+  wishRunner.scrollTop = 0;
+
+  requestAnimationFrame(() => {
+    const maxScroll = wishRunner.scrollHeight - wishRunner.clientHeight;
+    if (maxScroll <= 0) return;
+
+    const duration = Math.min(Math.max(maxScroll * 45, 9000), 28000);
+    const startedAt = performance.now();
+
+    function step(now) {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      wishRunner.scrollTop = maxScroll * progress;
+
+      if (progress < 1) {
+        wishAutoScrollFrame = requestAnimationFrame(step);
+      } else {
+        wishRunner.scrollTop = maxScroll;
+      }
+    }
+
+    wishAutoScrollFrame = requestAnimationFrame(step);
+  });
 }
 
 function handleWishSubmit(event) {
