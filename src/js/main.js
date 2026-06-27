@@ -99,11 +99,16 @@ function unveilInvitation() {
   const mainArea = document.getElementById("main-scroll-view");
   const musicBox = document.getElementById("musicToggle");
   const mediaTrack = document.getElementById("bgMusic");
+  const footerActions = document.getElementById("footerActions");
 
   invitationShell?.scrollTo({ top: 0, behavior: "auto" });
   mainArea?.classList.remove("main-body-lock");
   mainArea?.classList.add("main-body-active");
   envelope?.classList.add("door-opening");
+  musicBox?.classList.remove("hidden");
+  footerActions?.classList.remove("hidden");
+  musicBox?.classList.add("music-slide-in");
+  footerActions?.classList.add("footer-slide-in");
 
   mediaTrack
     ?.play()
@@ -119,8 +124,6 @@ function unveilInvitation() {
   window.setTimeout(() => {
     invitationShell?.classList.remove("invitation-locked");
     invitationShell?.classList.add("invitation-opened");
-    musicBox?.classList.remove("hidden");
-    document.getElementById("footerActions")?.classList.remove("hidden");
   }, 1600);
 
   window.setTimeout(() => {
