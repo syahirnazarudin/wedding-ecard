@@ -1,4 +1,5 @@
 ﻿import "../css/main.css";
+import { fetchWishes, hasSupabaseConfig, submitWish } from "./api.js";
 
 const weddingEvent = {
   title: "Walimatulurus Syahir & Zubairah",
@@ -249,20 +250,47 @@ function setupCalendarLinks() {
     );
 }
 
-function getWishes() {
+function getLocalWishes() {
   const savedWishes = window.localStorage.getItem("weddingWishes");
   return savedWishes ? JSON.parse(savedWishes) : defaultWishes;
 }
 
-function saveWishes(wishes) {
+function saveLocalWishes(wishes) {
   window.localStorage.setItem("weddingWishes", JSON.stringify(wishes));
 }
 
-function renderWishes() {
+async function getWishes() {
+  if (!hasSupabaseConfig()) {
+    return getLocalWishes();
+  }
+
+  const wishes = await fetchWishes();
+  return wishes;
+}
+
+async function renderWishes() {
   const wishTrack = document.getElementById("wishTrack");
   if (!wishTrack) return;
 
-  const wishes = getWishes();
+  let wishes = [];
+
+  try {
+    wishes = await getWishes();
+  } catch (error) {
+    console.warn("Unable to load wishes from Supabase.", error);
+    wishes = hasSupabaseConfig() ? [] : getLocalWishes();
+  }
+
+  if (!wishes.length) {
+    const emptyItem = document.createElement("article");
+    const message = document.createElement("p");
+
+    emptyItem.className = "wish-chip";
+    message.textContent = '"Jadilah yang pertama mengirim ucapan."';
+    emptyItem.append(message);
+    wishTrack.replaceChildren(emptyItem);
+    return;
+  }
 
   wishTrack.replaceChildren(
     ...wishes.map((wish) => {
@@ -311,7 +339,7 @@ function startWishAutoScroll() {
   });
 }
 
-function handleWishSubmit(event) {
+async function handleWishSubmit(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
@@ -324,11 +352,24 @@ function handleWishSubmit(event) {
 
   if (!wish.name || !wish.message) return;
 
-  const wishes = [wish, ...getWishes()];
-  saveWishes(wishes);
-  renderWishes();
+  feedback.className = "api-feedback-msg is-pending";
+  feedback.textContent = "Sedang menghantar ucapan...";
 
-  feedback.className = "api-feedback-msg is-success";
-  feedback.textContent = "Terima kasih, ucapan anda telah disimpan.";
-  form.reset();
+  try {
+    await submitWish(wish);
+
+    if (!hasSupabaseConfig()) {
+      const wishes = [wish, ...getLocalWishes()];
+      saveLocalWishes(wishes);
+    }
+
+    await renderWishes();
+    feedback.className = "api-feedback-msg is-success";
+    feedback.textContent = "Terima kasih, ucapan anda telah disimpan.";
+    form.reset();
+  } catch (error) {
+    console.warn("Unable to submit wish.", error);
+    feedback.className = "api-feedback-msg is-error";
+    feedback.textContent = "Maaf, ucapan tidak berjaya dihantar. Sila cuba lagi.";
+  }
 }
