@@ -1,10 +1,10 @@
 ﻿import "../css/main.css";
-import { submitRsvp } from "./api.js";
 
 const weddingEvent = {
-  title: "Walimatul Urus Syahir & Zubairah",
-  location: "Alam Maya, Kajang, Selangor",
-  details: "Majlis perkahwinan Syahir dan Zubairah.",
+  title: "Walimatulurus Syahir & Zubairah",
+  location:
+    "Alam Maya Kajang, Jalan Sungai Kantan, Taman Melati, Kajang, Selangor, Malaysia",
+  details: "Walimatulurus Syahir & Zubairah",
   start: "20260808T030000Z",
   end: "20260808T080000Z",
 };
@@ -16,7 +16,26 @@ const defaultWishes = [
   },
   {
     name: "Sahabat",
-    message: "Tahniah buat Syahir dan Zubairah. Semoga dipermudahkan segalanya.",
+    message:
+      "Tahniah buat Syahir dan Zubairah. Semoga dipermudahkan segalanya.",
+  },
+  {
+    name: "Keluarga",
+    message: "Semoga berbahagia hingga ke Jannah.",
+  },
+  {
+    name: "Sahabat",
+    message:
+      "Tahniah buat Syahir dan Zubairah. Semoga dipermudahkan segalanya.",
+  },
+  {
+    name: "Keluarga",
+    message: "Semoga berbahagia hingga ke Jannah.",
+  },
+  {
+    name: "Sahabat",
+    message:
+      "Tahniah buat Syahir dan Zubairah. Semoga dipermudahkan segalanya.",
   },
 ];
 
@@ -30,10 +49,6 @@ document.addEventListener("DOMContentLoaded", () => {
     ?.addEventListener("click", toggleMusic);
 
   document
-    .getElementById("weddingRsvpForm")
-    ?.addEventListener("submit", handleRsvpSubmit);
-
-  document
     .getElementById("wishForm")
     ?.addEventListener("submit", handleWishSubmit);
 
@@ -42,14 +57,22 @@ document.addEventListener("DOMContentLoaded", () => {
     ?.addEventListener("click", scrollToWishes);
 
   document.querySelectorAll("[data-sheet-target]").forEach((button) => {
-    button.addEventListener("click", () => openSheet(button.dataset.sheetTarget));
+    button.addEventListener("click", () =>
+      openSheet(button.dataset.sheetTarget),
+    );
   });
 
   document.querySelectorAll(".sheet-close").forEach((button) => {
     button.addEventListener("click", closeSheets);
   });
 
-  document.getElementById("sheetBackdrop")?.addEventListener("click", closeSheets);
+  document.querySelectorAll("[data-close-sheet]").forEach((button) => {
+    button.addEventListener("click", closeSheets);
+  });
+
+  document
+    .getElementById("sheetBackdrop")
+    ?.addEventListener("click", closeSheets);
 
   setupCalendarLinks();
   renderWishes();
@@ -62,14 +85,10 @@ function unveilInvitation() {
   const musicBox = document.getElementById("musicToggle");
   const mediaTrack = document.getElementById("bgMusic");
 
-  envelope?.classList.add("exit-slide-up");
-  invitationShell?.classList.remove("invitation-locked");
-  invitationShell?.classList.add("invitation-opened");
   invitationShell?.scrollTo({ top: 0, behavior: "auto" });
   mainArea?.classList.remove("main-body-lock");
   mainArea?.classList.add("main-body-active");
-  musicBox?.classList.remove("hidden");
-  document.getElementById("footerActions")?.classList.remove("hidden");
+  envelope?.classList.add("door-opening");
 
   mediaTrack
     ?.play()
@@ -81,6 +100,17 @@ function unveilInvitation() {
     });
 
   activateScrollWatcher();
+
+  window.setTimeout(() => {
+    invitationShell?.classList.remove("invitation-locked");
+    invitationShell?.classList.add("invitation-opened");
+    musicBox?.classList.remove("hidden");
+    document.getElementById("footerActions")?.classList.remove("hidden");
+  }, 1600);
+
+  window.setTimeout(() => {
+    envelope?.classList.add("hidden");
+  }, 2100);
 }
 
 function toggleMusic() {
@@ -119,43 +149,42 @@ function activateScrollWatcher() {
   });
 }
 
-async function handleRsvpSubmit(event) {
-  event.preventDefault();
+function openSheet(sheetId) {
+  closeSheets();
+  document.getElementById("invitationShell")?.classList.add("sheet-is-open");
+  document
+    .querySelector(`[data-sheet-target="${sheetId}"]`)
+    ?.classList.add("is-active");
+  const musicToggle = document.getElementById("musicToggle");
+  const sheet = document.getElementById(sheetId);
 
-  const form = event.currentTarget;
-  const feedback = document.getElementById("rsvpStatusFeedback");
-  const formData = new FormData(form);
-  const selection = formData.get("attendanceStatus");
-  const rawPax = Number.parseInt(formData.get("paxCount"), 10);
+  musicToggle?.classList.add("sheet-floating-top");
+  document.getElementById("sheetBackdrop")?.classList.remove("hidden");
+  sheet?.classList.remove("hidden");
 
-  feedback.className = "api-feedback-msg is-pending";
-  feedback.textContent = "Sila tunggu sebentar...";
+  if (musicToggle && sheet) {
+    const sheetStyles = window.getComputedStyle(sheet);
+    const sheetBottom = Number.parseFloat(sheetStyles.bottom) || 0;
+    const sheetHeight = sheet.offsetHeight;
+    const musicGap = sheetBottom + sheetHeight + 24;
 
-  const payload = {
-    guest_name: formData.get("guestName").trim(),
-    attending: selection === "yes",
-    pax_count: Number.isNaN(rawPax) ? 1 : rawPax,
-  };
-
-  try {
-    await submitRsvp(payload);
-    feedback.className = "api-feedback-msg is-success";
-    feedback.textContent = "Terima kasih! RSVP anda berjaya dihantar.";
-    form.reset();
-  } catch (failure) {
-    feedback.className = "api-feedback-msg is-error";
-    feedback.textContent = "Ralat sistem. Sila cuba sekali lagi.";
+    musicToggle.style.bottom = `${Math.round(musicGap)}px`;
   }
 }
 
-function openSheet(sheetId) {
-  closeSheets();
-  document.getElementById("sheetBackdrop")?.classList.remove("hidden");
-  document.getElementById(sheetId)?.classList.remove("hidden");
-}
-
 function closeSheets() {
+  document.getElementById("invitationShell")?.classList.remove("sheet-is-open");
+  const musicToggle = document.getElementById("musicToggle");
+
+  musicToggle?.classList.remove("sheet-floating-top");
+  if (musicToggle) {
+    musicToggle.style.bottom = "";
+  }
+
   document.getElementById("sheetBackdrop")?.classList.add("hidden");
+  document.querySelectorAll("[data-sheet-target]").forEach((button) => {
+    button.classList.remove("is-active");
+  });
   document.querySelectorAll(".action-sheet").forEach((sheet) => {
     sheet.classList.add("hidden");
   });
@@ -163,14 +192,19 @@ function closeSheets() {
 
 function scrollToWishes() {
   closeSheets();
-  document.getElementById("wishesSection")?.scrollIntoView({ behavior: "smooth" });
+  document
+    .getElementById("wishesSection")
+    ?.scrollIntoView({ behavior: "smooth" });
 }
 
 function setupCalendarLinks() {
   const googleCalendar = new URL("https://calendar.google.com/calendar/render");
   googleCalendar.searchParams.set("action", "TEMPLATE");
   googleCalendar.searchParams.set("text", weddingEvent.title);
-  googleCalendar.searchParams.set("dates", `${weddingEvent.start}/${weddingEvent.end}`);
+  googleCalendar.searchParams.set(
+    "dates",
+    `${weddingEvent.start}/${weddingEvent.end}`,
+  );
   googleCalendar.searchParams.set("details", weddingEvent.details);
   googleCalendar.searchParams.set("location", weddingEvent.location);
 
@@ -190,10 +224,15 @@ function setupCalendarLinks() {
     "END:VCALENDAR",
   ].join("\r\n");
 
-  document.getElementById("googleCalendarLink")?.setAttribute("href", googleCalendar);
+  document
+    .getElementById("googleCalendarLink")
+    ?.setAttribute("href", googleCalendar);
   document
     .getElementById("appleCalendarLink")
-    ?.setAttribute("href", `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`);
+    ?.setAttribute(
+      "href",
+      `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`,
+    );
 }
 
 function getWishes() {
@@ -215,14 +254,14 @@ function renderWishes() {
   wishTrack.replaceChildren(
     ...repeatedWishes.map((wish) => {
       const item = document.createElement("article");
+      const message = document.createElement("p");
       const name = document.createElement("strong");
-      const message = document.createElement("span");
 
       item.className = "wish-chip";
+      message.textContent = `"${wish.message}"`;
       name.textContent = wish.name;
-      message.textContent = wish.message;
 
-      item.append(name, message);
+      item.append(message, name);
       return item;
     }),
   );
