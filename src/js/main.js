@@ -10,6 +10,8 @@ const weddingEvent = {
   end: "20260808T080000Z",
 };
 
+const weddingCountdownTarget = new Date("2026-08-08T11:00:00+08:00");
+
 const defaultWishes = [
   {
     name: "Keluarga",
@@ -90,6 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   setupCalendarLinks();
+  setupCountdown();
   renderWishes();
 });
 
@@ -251,6 +254,32 @@ function setupCalendarLinks() {
       "href",
       `data:text/calendar;charset=utf8,${encodeURIComponent(ics)}`,
     );
+}
+
+function setupCountdown() {
+  const days = document.getElementById("countdownDays");
+  const hours = document.getElementById("countdownHours");
+  const minutes = document.getElementById("countdownMinutes");
+  const seconds = document.getElementById("countdownSeconds");
+
+  if (!days || !hours || !minutes || !seconds) return;
+
+  function updateCountdown() {
+    const remaining = Math.max(weddingCountdownTarget.getTime() - Date.now(), 0);
+    const totalSeconds = Math.floor(remaining / 1000);
+    const dayValue = Math.floor(totalSeconds / 86400);
+    const hourValue = Math.floor((totalSeconds % 86400) / 3600);
+    const minuteValue = Math.floor((totalSeconds % 3600) / 60);
+    const secondValue = totalSeconds % 60;
+
+    days.textContent = dayValue;
+    hours.textContent = String(hourValue).padStart(2, "0");
+    minutes.textContent = String(minuteValue).padStart(2, "0");
+    seconds.textContent = String(secondValue).padStart(2, "0");
+  }
+
+  updateCountdown();
+  window.setInterval(updateCountdown, 1000);
 }
 
 function getLocalWishes() {
