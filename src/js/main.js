@@ -5,9 +5,10 @@ const weddingEvent = {
   title: "Walimatulurus Syahir & Zubairah",
   location:
     "Alam Maya Kajang, Jalan Sungai Kantan, Taman Melati, Kajang, Selangor, Malaysia",
-  details: "Walimatulurus Syahir & Zubairah",
-  start: "20260808T030000Z",
-  end: "20260808T080000Z",
+  details: "Walimatulurus Syahir & Zubairah.",
+  timezone: "Asia/Kuala_Lumpur",
+  startLocal: "20260808T110000",
+  endLocal: "20260808T160000",
 };
 
 const weddingCountdownTarget = new Date("2026-08-08T11:00:00+08:00");
@@ -79,17 +80,21 @@ document.addEventListener("DOMContentLoaded", () => {
     .getElementById("sheetBackdrop")
     ?.addEventListener("click", closeSheets);
 
-  document.querySelector(".wish-runner")?.addEventListener(
-    "pointerdown",
-    () => cancelAnimationFrame(wishAutoScrollFrame),
-    { passive: true },
-  );
+  document
+    .querySelector(".wish-runner")
+    ?.addEventListener(
+      "pointerdown",
+      () => cancelAnimationFrame(wishAutoScrollFrame),
+      { passive: true },
+    );
 
-  document.querySelector(".wish-runner")?.addEventListener(
-    "wheel",
-    () => cancelAnimationFrame(wishAutoScrollFrame),
-    { passive: true },
-  );
+  document
+    .querySelector(".wish-runner")
+    ?.addEventListener(
+      "wheel",
+      () => cancelAnimationFrame(wishAutoScrollFrame),
+      { passive: true },
+    );
 
   setupCalendarLinks();
   setupCountdown();
@@ -224,8 +229,9 @@ function setupCalendarLinks() {
   googleCalendar.searchParams.set("text", weddingEvent.title);
   googleCalendar.searchParams.set(
     "dates",
-    `${weddingEvent.start}/${weddingEvent.end}`,
+    `${weddingEvent.startLocal}/${weddingEvent.endLocal}`,
   );
+  googleCalendar.searchParams.set("ctz", weddingEvent.timezone);
   googleCalendar.searchParams.set("details", weddingEvent.details);
   googleCalendar.searchParams.set("location", weddingEvent.location);
 
@@ -233,14 +239,22 @@ function setupCalendarLinks() {
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
     "PRODID:-//Wedding E-card//EN",
+    "CALSCALE:GREGORIAN",
+    "METHOD:PUBLISH",
+    `X-WR-TIMEZONE:${weddingEvent.timezone}`,
     "BEGIN:VEVENT",
     "UID:syahir-zubairah-20260808@wedding-ecard",
-    `DTSTAMP:${weddingEvent.start}`,
-    `DTSTART:${weddingEvent.start}`,
-    `DTEND:${weddingEvent.end}`,
-    `SUMMARY:${weddingEvent.title}`,
-    `DESCRIPTION:${weddingEvent.details}`,
-    `LOCATION:${weddingEvent.location}`,
+    `DTSTAMP:${formatUtcDateForCalendar(new Date())}`,
+    `DTSTART;TZID=${weddingEvent.timezone}:${weddingEvent.startLocal}`,
+    `DTEND;TZID=${weddingEvent.timezone}:${weddingEvent.endLocal}`,
+    `SUMMARY:${escapeCalendarText(weddingEvent.title)}`,
+    `DESCRIPTION:${escapeCalendarText(weddingEvent.details)}`,
+    `LOCATION:${escapeCalendarText(weddingEvent.location)}`,
+    "BEGIN:VALARM",
+    "TRIGGER:-PT1H",
+    "ACTION:DISPLAY",
+    `DESCRIPTION:${escapeCalendarText(weddingEvent.title)}`,
+    "END:VALARM",
     "END:VEVENT",
     "END:VCALENDAR",
   ].join("\r\n");
@@ -256,6 +270,21 @@ function setupCalendarLinks() {
     );
 }
 
+function formatUtcDateForCalendar(date) {
+  return date
+    .toISOString()
+    .replace(/[-:]/g, "")
+    .replace(/\.\d{3}Z$/, "Z");
+}
+
+function escapeCalendarText(value) {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\n/g, "\\n");
+}
+
 function setupCountdown() {
   const days = document.getElementById("countdownDays");
   const hours = document.getElementById("countdownHours");
@@ -265,7 +294,10 @@ function setupCountdown() {
   if (!days || !hours || !minutes || !seconds) return;
 
   function updateCountdown() {
-    const remaining = Math.max(weddingCountdownTarget.getTime() - Date.now(), 0);
+    const remaining = Math.max(
+      weddingCountdownTarget.getTime() - Date.now(),
+      0,
+    );
     const totalSeconds = Math.floor(remaining / 1000);
     const dayValue = Math.floor(totalSeconds / 86400);
     const hourValue = Math.floor((totalSeconds % 86400) / 3600);
@@ -325,24 +357,24 @@ async function renderWishes() {
   }
 
   const wishElements = wishes.flatMap((wish, index) => {
-      const item = document.createElement("article");
-      const message = document.createElement("p");
-      const name = document.createElement("strong");
+    const item = document.createElement("article");
+    const message = document.createElement("p");
+    const name = document.createElement("strong");
 
-      item.className = "wish-chip";
-      message.textContent = `"${wish.message}"`;
-      name.textContent = wish.name;
+    item.className = "wish-chip";
+    message.textContent = `"${wish.message}"`;
+    name.textContent = wish.name;
 
-      item.append(message, name);
-      if (index === wishes.length - 1) {
-        return [item];
-      }
+    item.append(message, name);
+    if (index === wishes.length - 1) {
+      return [item];
+    }
 
-      const divider = document.createElement("div");
-      divider.className = "ui-divider wish-divider";
-      divider.setAttribute("aria-hidden", "true");
-      return [item, divider];
-    });
+    const divider = document.createElement("div");
+    divider.className = "ui-divider wish-divider";
+    divider.setAttribute("aria-hidden", "true");
+    return [item, divider];
+  });
 
   wishTrack.replaceChildren(...wishElements);
 
@@ -409,6 +441,7 @@ async function handleWishSubmit(event) {
   } catch (error) {
     console.warn("Unable to submit wish.", error);
     feedback.className = "api-feedback-msg is-error";
-    feedback.textContent = "Maaf, ucapan tidak berjaya dihantar. Sila cuba lagi.";
+    feedback.textContent =
+      "Maaf, ucapan tidak berjaya dihantar. Sila cuba lagi.";
   }
 }
