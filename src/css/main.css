@@ -146,16 +146,16 @@ body {
   bottom: 0;
   left: 50%;
   z-index: 3;
-  width: 8px;
+  width: 2px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(68, 62, 54, 0.22),
-    rgba(255, 255, 255, 0.5),
-    rgba(68, 62, 54, 0.22),
+    rgba(68, 62, 54, 0.2),
+    rgba(68, 62, 54, 0.28),
+    rgba(68, 62, 54, 0.2),
     transparent
   );
-  box-shadow: 0 0 14px rgba(68, 62, 54, 0.14);
+  box-shadow: 0 0 8px rgba(68, 62, 54, 0.1);
   transform: translateX(-50%);
   transition: opacity 0.65s ease;
 }
